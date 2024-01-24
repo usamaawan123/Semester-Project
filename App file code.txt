@@ -1,0 +1,133 @@
+import {NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import MyFavourites from "./tab_screens/MyFavourites";
+import My_Todos from "./tab_screens/My_Todos";
+import Settings from "./tab_screens/Settings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useState, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import UserInfo from "./tab_screens/UserInfo";
+
+function StackScreen() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen options={{headerShown:false}} name="Home" component={MyFavourites}></Stack.Screen>
+      <Stack.Screen options={{headerShown:false}} name="usama" component={UserInfo}></Stack.Screen>
+    </Stack.Navigator>
+  );
+}
+const Stack = createNativeStackNavigator();
+
+export default function App() {
+  const [Name, setname] = useState("");
+  const Tab = createBottomTabNavigator();
+  useEffect(() => {
+    getData();
+  });
+
+  const getData = async () => {
+    try {
+      await AsyncStorage.getItem("name1").then((value) => {
+        if (value != null) {
+          setname(value);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        initialRouteName="My Favourites"
+        screenOptions={{
+          tabBarActiveTintColor: "black",
+          tabBarInactiveTintColor: "black",
+          tabBarLabelStyle: { fontWeight: "bold" },
+          headerTitle: Name,
+          headerStyle: { backgroundColor: "dodgerblue" },
+          headerTintColor: "white",
+          headerTitleAlign:'center',
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontStyle: "italic",
+            fontSize: 30,
+            textAlign: "center"
+          },
+        }}
+      >
+        <Tab.Screen
+          options={{
+            tabBarLabelStyle: {
+              fontSize: 15,
+              fontWeight: "bold",
+              fontStyle: "italic",
+            },
+            tabBarOptions: {
+              activeTintColor: "#006600",
+            },
+            tabBarIcon: (tabInfo) => {
+              return (
+                <Ionicons
+                  name="md-home-outline"
+                  size={24}
+                  color={tabInfo.focused ? "#006600" : "black"}
+                />
+              );
+            },
+          }}
+          name="My Favourites"
+          component={StackScreen}
+        ></Tab.Screen>
+        <Tab.Screen
+          options={{
+            tabBarLabelStyle: {
+              fontSize: 15,
+              fontWeight: "bold",
+              fontStyle: "italic",
+            },
+            tabBarOptions: {
+              activeTintColor: "#006600",
+            },
+            tabBarIcon: (tabInfo) => {
+              return (
+                <Ionicons
+                  name="md-person-circle-outline"
+                  size={24}
+                  color={tabInfo.focused ? "#006600" : "black"}
+                />
+              );
+            },
+          }}
+          name="My Todos"
+          component={My_Todos}
+        ></Tab.Screen>
+        <Tab.Screen
+          options={{
+            tabBarLabelStyle: {
+              fontSize: 15,
+              fontWeight: "bold",
+              fontStyle: "italic",
+            },
+            tabBarOptions: {
+              activeTintColor: "#006600",
+            },
+            tabBarIcon: (tabInfo) => {
+              return (
+                <Ionicons
+                  name="md-settings-outline"
+                  size={24}
+                  color={tabInfo.focused ? "#006600" : "black"}
+                />
+              );
+            },
+          }}
+          name="Settings"
+          component={Settings}
+        ></Tab.Screen>
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
